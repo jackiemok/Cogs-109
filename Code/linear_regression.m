@@ -23,7 +23,7 @@
 %      mpg            (1 x 392 double)
 %      weight         (1 x 392 double)
 clear; close all; clc; format long e;
-load Data_Week1.mat;
+load('C:\Users\Jacqueline\Desktop\Git\Cogs 109\Data\Data_Week1.mat')
 
 % Create a scatterplot with x-axis 'Car Weight' & y-axis 'MPG'
 figure;
@@ -94,3 +94,5 @@ sse_2 = sum( (yhat_2 - mpg').^2 ); disp(sse_2);
 sse_3 = sum( (yhat_3 - mpg').^2 ); disp(sse_3);
 
 % To ensure against overfitting, should use leave-one-out cross validation.
+% See leave_one_out_validate.m (modified demonstration of leave-one-out
+% cross validation process).

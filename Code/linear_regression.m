@@ -16,27 +16,27 @@
 
 % IMPORT & PLOT DATA
 
-% Import Data_Week1.mat
+clear; close all; clc; format long e;
+
+% Import data
+load('C:\Users\Jacqueline\Desktop\Git\Cogs 109\Data\Data_Week1.mat')
 % 4 variables: (Row vectors with 392 columns)
 %      displacement   (1 x 392 double)
 %      horsepower     (1 x 392 double)
 %      mpg            (1 x 392 double)
 %      weight         (1 x 392 double)
-clear; close all; clc; format long e;
-load('C:\Users\Jacqueline\Desktop\Git\Cogs 109\Data\Data_Week1.mat')
 
 % Create a scatterplot with x-axis 'Car Weight' & y-axis 'MPG'
-figure;
+figure; hold on;
 scatter( weight, mpg, 50, 'filled' );          % Filled circles of size 50
 set( gca, 'fontsize', 10 );                    % Font size 10
 title( 'MPG = f(Weight)' );                    % Graph title
 xlabel( 'Car Weight' );                        % x-axis label
 ylabel( 'MPG' );                               % y-axis label
-hold on;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% FIRST-ORDER MODEL
+% FIRST-ORDER MODEL .......................................................
 
 % We select a first-order linear regression model and put our data into 
 % matrix form so that (MPG) y = A * w, where w is our desired vector of 
@@ -52,7 +52,7 @@ y_test = A_test * w_1;
 plot( x_test, y_test, 'k', 'linewidth', 2 );       % Black
             
 
-% SECOND-ORDER MODEL
+% SECOND-ORDER MODEL ......................................................
 
 % We select a second-order linear regression model and put our data into 
 % matrix form so that (MPG) y = A * w, where w is our desired vector of 
@@ -67,7 +67,7 @@ y_test = A_test * w_2;
 plot( x_test, y_test, 'r', 'linewidth', 2 );       % Red
 
 
-% THIRD-ORDER MODEL
+% THIRD-ORDER MODEL .......................................................
 
 % We select a third-order linear regression model and put our data into 
 % matrix form so that (MPG) y = A * w, where w is our desired vector of 

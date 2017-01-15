@@ -61,25 +61,24 @@ b = -2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 x_test = -4:4;                          % [-4 -3 ... 0 1 2 3 4]
-
-n = length(x);                          % # data points
 max_iter = 200;                         % Max. # iterations allowed
-iter = 0;                               % Initialize # used iterations
 
 for i = 1:max_iter
     err_id = [];                       % Keep track of misclassified points
     y_test = ( -w_1 * x_test - b ) / w_2;
     
     % Scatterplot for each data point (x,y)
-    % Color assigned by target type (Green = -1, Red = 1)
+    % Color assigned by target type (Green <- -1, Red <- 1)
     figure(1); clf; hold on;
     scatter( x(target == -1), y(target == -1), 200, 'g', 'filled' );
     scatter( x(target == 1), y(target == 1), 200, 'r', 'filled' );
     plot( x_test, y_test, 'k', 'linewidth', 2 );
     xlim( [-5 7] ); ylim( [-5 7] );
+    xlabel( 'x' ); ylabel( 'y' );
     
     % Iterate through all given data points (x,y)
-    for j = 1:n
+    for j = 1:length(x)
+        % Threshold function 'net'
         threshold = w_1*x(j) + w_2*y(j) + b;
 
         % Get classification f( net(x,y) ) for current (x,y)
@@ -112,9 +111,10 @@ for i = 1:max_iter
         b = b + (target(err_id(1)) - output(err_id(1)));
         pause(1);
     else
+        % Report found solution along with model parameters w_1, w_2, b
         set( gca, 'fontsize', 10 );
         title( sprintf('Found solution: w_1 = %.2f, w_2 = %.2f, b = %.2f', w_1, w_2, b) );
-        iter = i;                      % # iterations used to find solution
+        disp(i);                      % # iterations used to find solution
         break
     end
  
@@ -122,6 +122,7 @@ for i = 1:max_iter
     % Either we need to increase max_iter, or there does not exist an
     % appropriate linear decision boundary (perhaps nonlinear)
     if i == max_iter
+        % Report no found solution in maximum number of iterations allowed
         set( gca,'fontsize', 10 );
         title( sprintf('No solution found in %d iterations!', max_iter) );
     end

@@ -25,6 +25,8 @@
 % IMPORT DATA & INITIALIZE LEARNING ALGORITHM
 
 clear; close all; clc; format long e;
+
+% Import data
 load('C:\Users\Jacqueline\Desktop\Git\Cogs 109\Data\perceptron_data.mat')
 % x  <-  [1 x 17] double
 % y  <-  [1 x 17] double
@@ -60,10 +62,8 @@ b = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 x_test = -10:10;                        % [ -10 -9 ... -1 0 1 ... 9 10 ]
-
 n = length(x);                          % # data points
 max_iter = 20;                          % Max. # iterations allowed
-iter = 0;                               % Initialize # used iterations
 eta = 1;                                % Learning rate
 
 dist = 0; 
@@ -73,6 +73,7 @@ for i = 1:max_iter
     err_id = [];                       % Keep track of misclassified points
     y_test = ( -w_1 * x_test - b ) / w_2;
     
+    % Clear plotted net threshold function line
     if dist == 0
         figure(1); clf;
     else
@@ -80,15 +81,17 @@ for i = 1:max_iter
     end
     
     % Scatterplot for each data point (x,y)
-    % Color assigned by target type (Green = -1, Red = 1)
+    % Color assigned by target type (Green <- -1, Red <- 1)
     hold on;
     scatter( x(target == -1), y(target == -1), 200, 'g', 'filled' );
     scatter( x(target == 1), y(target == 1), 200, 'r', 'filled' );
     plot( x_test, y_test, 'k', 'linewidth', 2 );
     xlim( [-15 15] ); ylim( [-15 15] );
+    xlabel( 'x' ); ylabel( 'y' );
     
     % Iterate through all given data points (x,y)
     for j = 1:n
+        % Net threshold function
         threshold = w_1*x(j) + w_2*y(j) + b;
 
         % Get classification f( net(x,y) ) for current (x,y)
@@ -106,6 +109,8 @@ for i = 1:max_iter
             err_id = [ err_id j ];         % Flag indices with mismatch
         end
     end
+    
+    % Track accuracy for each iteration
     acc_track(i) = round( 100 * (1 - length(err_id)/n) );
     
     if any( err_id )                       % Any positive values ( = 1 )?
@@ -122,9 +127,10 @@ for i = 1:max_iter
         b = b + eta*(target(err_id(1)) - output(err_id(1)));
         pause(1);
     else
+        % Report found solution and number of iterations used
         set( gca, 'fontsize', 10 );
         title( sprintf('Found solution: w_1 = %.2f, w_2 = %.2f, b = %.2f', w_1, w_2, b) );
-        iter = i;                      % # iterations used to find solution
+        fprintf( 'Found solution in %d iterations', i );
         break
     end
  
@@ -132,6 +138,7 @@ for i = 1:max_iter
     % Either we need to increase max_iter, or there does not exist an
     % appropriate linear decision boundary (perhaps nonlinear)
     if i == max_iter
+        % Report no found solution and give accuracy
         set( gca,'fontsize', 10 );
         title( sprintf('No solution found in %d iterations! (Best accuracy: %d%%)', max_iter, max(acc_track)) );
     end

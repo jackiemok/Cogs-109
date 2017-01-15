@@ -29,17 +29,17 @@
 
 % IMPORT & PLOT DATA
 
-% Import xy.mat
 clear; close all; clc; format long e;
+
+% Import data
 load('C:\Users\Jacqueline\Desktop\Git\Cogs 109\Data\xy.mat')
 
 % Scatterplot of true data
-figure;
+figure(1); clf;                                % New figure
 scatter( x, y, 50, 'filled' );                 % Filled circles of size 50
-set( gca, 'fontsize', 5 );                     % Font size 5
-title( 'y = f(x)' );                           % Graph title
-xlabel( 'x' );                                 % x-axis label
-ylabel( 'y' );                                 % y-axis label
+set( gca, 'fontsize', 10 );                    % Font size 10
+title( 'True Data' );                          % Graph title
+xlabel( 'x' ); ylabel( 'y' );                  % x & y axes labels
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -47,9 +47,9 @@ ylabel( 'y' );                                 % y-axis label
 
 % Select 'n' for the n-th order model
 % We fit 1st, 3rd, and 6th order models below ...
-model_order = 1;
-% model_order = 3;
-% model_order = 6;
+model_order = 1;                    % 1st-Order model
+% model_order = 3;                  % 3rd-Order model
+% model_order = 6;                  % 6th-Order model
 
 % Initialize total error
 total_error = 0;
@@ -62,8 +62,9 @@ for i = 1:n
     % Select one datum to exclude from the training data set
     excluded_datum = x(i);
     
-    % Graphically display excluded datum
-    subplot( 2, 4, i );
+    % Graphically display excluded datum (blue unfilled circle)
+    figure(2); 
+    subplot( 2, 4, i ); hold on;
     scatter( excluded_datum, y(i), 50, 'b', 'linewidth', 3 );
     
     % Compose the training set with the remaining data
@@ -78,24 +79,22 @@ for i = 1:n
         y_use = y( [1:i-1, i+1:n] );
     end
     
-    % Graphically display remaining data
-    hold on;
+    % Graphically display remaining data (blue filled circles)
     scatter( x_use, y_use, 50, 'b', 'filled' );
-    xlim( [-.5 6.5] );
-    ylim( [-20 45] );
+    xlim( [ -.5 6.5 ] ); ylim( [ -20 45 ] );
+    xlabel( 'x' ); ylabel( 'y' );
     set( gca, 'fontsize', 10 );
-    hold on;
     
     %----------------------------------------------------------------------
     % Fit linear regression models on the remaining data & visualize
-    x_test = -1 : .1 : 6.5;
-    x_test = x_test';
+    x_test = -1 : .1 : 6.5;                 % x_test = [-1 -.9 ... 6.4 6.5]
+    x_test = x_test';                       % Set as transpose
     
-    % FIRST-ORDER LINEAR MODEL 
+    % FIRST-ORDER LINEAR MODEL ............................................
     if model_order == 1
         % Fit linear model
-        A = [x_use ones(n-1,1)];               % length(x_use) = (n - 1)
-        w = A \ y_use;                         % Solve for model parameters
+        A = [x_use ones(n-1,1)];            % length(x_use) = (n - 1)
+        w = A \ y_use;                      % Solve for model parameters
         
         % Visualize model prediction (Black)
         A_test = [x_test ones(length(x_test),1)];
@@ -104,15 +103,14 @@ for i = 1:n
         
         % Compute prediction error for each excluded datum
         yleftout = [excluded_datum 1] * w;
-        sqerr = (yleftout - y(i))^2;
-        total_error = total_error + sqerr;      % Add error for each point
+        % Add error for each point
+        total_error = total_error + (yleftout - y(i))^2;      
         
         scatter( excluded_datum, yleftout, 50, 'k', 'linewidth', 3 );
-        title( sprintf( 'Error = %.2f', sqerr ) );
-        legend( sprintf( 'Total Test Error for 1st-Order Fit: %.2f', total_error ) );     
+        title( sprintf( 'SSE: %.2f', total_error ) );     
         pause(.5);
         
-    % THIRD-ORDER LINEAR MODEL
+    % THIRD-ORDER LINEAR MODEL ............................................
     elseif model_order == 3
         % Fit linear model
         A = [x_use.^3 x_use.^2 x_use ones(n-1,1)];
@@ -121,23 +119,22 @@ for i = 1:n
         % Visualize model prediction (Red)
         A_test = [x_test.^3 x_test.^2 x_test ones(length(x_test),1)];
         y_test = A_test * w;
-        plot( x_test, y_test, 'r', 'linewidth', 2 ); 
+        plot( x_test, y_test, 'r', 'linewidth', 2 );
         
         % Compute prediction error for each excluded datum
-        yleftout = [excluded_datum^3 excluded_datum^2 excluded_datum 1] * w;
-        sqerr = (yleftout - y(i))^2;
-        total_error = total_error + sqerr;      % Add error for each point
+        yleftout = [excluded_datum.^3 excluded_datum.^2 excluded_datum 1] * w;
+        % Add error for each point
+        total_error = total_error + (yleftout - y(i))^2;      
         
-        scatter( excluded_datum, yleftout, 50, 'r', 'linewidth', 3 );
-        title( sprintf( 'Error = %.2f', sqerr ) );
-        legend( sprintf( 'Total Test Error for 3rd-Order Fit: %.2f', total_error ) );   
+        scatter( excluded_datum, yleftout, 50, 'r', 'linewidth', 3 ); 
+        title( sprintf( 'SSE: %.2f', total_error ) );   
         pause(.5);
         
-    % SIXTH-ORDER LINEAR MODEL
+    % SIXTH-ORDER LINEAR MODEL ............................................
     else
         % Fit linear model
         A = [x_use.^6 x_use.^5 x_use.^4 x_use.^3 x_use.^2 x_use ones(n-1,1)];
-        w = A \ yuse;                          % Solve for model parameters
+        w = A \ y_use;                          % Solve for model parameters
         
         % Visualize model prediction (Green)
         A_test = [x_test.^6 x_test.^5 x_test.^4 x_test.^3 x_test.^2 x_test ones(length(x_test),1)];
@@ -145,13 +142,12 @@ for i = 1:n
         plot( x_test, y_test, 'g', 'linewidth', 2 );
         
         % Compute prediction error for each excluded datum
-        yleftout6 = [excluded_datum^6 excluded_datum^5 excluded_datum^4 excluded_datum^3 excluded_datum^2 excluded_datum 1] * w;
-        sqerr6 = (yleftout5 - y(i))^2;
-        total_error = total_error + sqerr;      % Add error for each point
+        yleftout = [excluded_datum.^6 excluded_datum.^5 excluded_datum.^4 excluded_datum.^3 excluded_datum.^2 excluded_datum 1] * w;
+        % Add error for each point
+        total_error = total_error + (yleftout - y(i))^2;      
         
         scatter( excluded_datum, yleftout, 50, 'g', 'linewidth', 3 );
-        title( sprintf( 'Error = %.2f', sqerr ) );
-        legend( sprintf( 'Total Test Error for 6th-Order Fit: %.2f', total_error ) );   
+        title( sprintf( 'SSE: %.2f', total_error ) );   
         pause(.5);
-    end
+    end %..................................................................
 end
